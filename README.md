@@ -1,9 +1,11 @@
 # TODO List
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/tehbooom/todo)](https://goreportcard.com/report/github.com/tehbooom/todo)
+
 ## Install
 
 ```bash
-go install 
+go install github.com/tehbooom/todo
 ```
 
 ## Usage
