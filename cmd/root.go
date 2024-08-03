@@ -4,39 +4,27 @@ Copyright © 2024 Alec Carpenter
 package cmd
 
 import (
-	"os"
-
 	"github.com/spf13/cobra"
+	"github.com/tehbooom/todo/cmd/group"
 )
 
-// rootCmd represents the base command when called without any subcommands
-var rootCmd = &cobra.Command{
-	Use:   "todo",
-	Short: "todo CLI app",
-	Long: `todo app thats simple and not unique allowing you to add, list and remove tasks
+func NewRootCmd() *cobra.Command {
+	rootCmd := &cobra.Command{
 
-To add a task run:
-
-todo add <task>
-
-To list tasks run:
-
-todo list
-
-To remove a task by ID run:
-
-todo rm <task_ID>`,
-}
-
-// Execute adds all child commands to the root command and sets flags appropriately.
-// This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
-	err := rootCmd.Execute()
-	if err != nil {
-		os.Exit(1)
+		Use:   "todo",
+		Short: "todo CLI app",
+		Long:  `todo app thats simple and not unique allowing you to add, list and remove tasks`,
 	}
+	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	rootCmd.AddCommand(RmCmd())
+	rootCmd.AddCommand(EditCmd())
+	rootCmd.AddCommand(ListCmd())
+	rootCmd.AddCommand(group.GroupCmd())
+	rootCmd.AddCommand(AddCmd())
+	return rootCmd
 }
 
-func init() {
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+func Execute() error {
+	rootCmd := NewRootCmd()
+	return rootCmd.Execute()
 }

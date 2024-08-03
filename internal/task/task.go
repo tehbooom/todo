@@ -8,19 +8,23 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"strings"
+	"time"
 )
 
 type Tasks struct {
-	Task []Task `json:"tasks"`
+	Task   []Task  `json:"tasks"`
+	Groups []Group `json:"groups"`
 }
 
 type Task struct {
-	ID   int    `json:"id"`
-	Item string `json:"item"`
+	ID        int    `json:"id"`
+	Item      string `json:"item"`
+	Timestamp string `json:"timestamp"`
+	Group     string `json:"group"`
 }
 
-func readTasks(path string) (Tasks, error) {
+// Reads the tasks and groups from file and returns *Tasks
+func ReadTasks(path string) (Tasks, error) {
 	var tasks Tasks
 	if _, err := os.Stat(path); err != nil {
 		emptyList, err := json.Marshal(&tasks)
@@ -48,14 +52,9 @@ func readTasks(path string) (Tasks, error) {
 	return tasks, nil
 }
 
-func writeTasks(path string, item Task) error {
-	existingTasks, err := readTasks(path)
-	if err != nil {
-		return err
-	}
-	existingTasks.Task = append(existingTasks.Task, item)
-
-	jsonTasks, err := json.Marshal(existingTasks)
+// Writes tasks to the file
+func (t *Tasks) WriteTasks(path string) error {
+	jsonTasks, err := json.Marshal(&t)
 	if err != nil {
 		return err
 	}
@@ -64,84 +63,71 @@ func writeTasks(path string, item Task) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
-func AddTask(path, message string) (Task, error) {
+// Adds a single task
+func (t *Tasks) AddTask(message, group string, groupSet bool) error {
 	var newTask Task
 	var newTaskID int
-
-	existingsTasks, err := readTasks(path)
-	if err != nil {
-		return newTask, err
-	}
-	if len(existingsTasks.Task) != 0 {
-		lastTask := existingsTasks.Task[len(existingsTasks.Task)-1]
-
-		newTaskID = lastTask.ID + 1
+	if len(t.Task) != 0 {
+		fmt.Println(len(t.Task) - 1)
+		newTaskID = len(t.Task)
+		fmt.Println(newTaskID)
 	} else {
 		newTaskID = 0
 	}
-	newTask = Task{ID: newTaskID, Item: message}
-	err = writeTasks(path, newTask)
-	if err != nil {
-		return newTask, err
+	if !groupSet {
+		group = ""
 	}
-	return newTask, nil
+	timestamp := time.Now()
+	newTask = Task{ID: newTaskID, Item: message, Group: group, Timestamp: timestamp.Format(time.RFC3339)}
+	t.Task = append(t.Task, newTask)
+	return nil
 }
 
-func RemoveTask(path string, id int) error {
-	taskList, err := readTasks(path)
-	if err != nil {
-		return err
+// Edit a task
+func (t *Tasks) EditTask(message, group string, ID int, groupSet bool) error {
+	existingTask := t.Task[ID]
+	if message == "" {
+		message = existingTask.Item
 	}
-	if id > len(taskList.Task)-1 {
-		fmt.Println("ID number provided does not exist")
-		err = ListTasks(path)
-		if err != nil {
-			return err
+	timestamp := time.Now()
+	if !groupSet {
+		group = existingTask.Group
+	} else {
+		if group == "" && existingTask.Group != "" {
+			t.removeTaskFromGroup(ID)
 		}
-		return fmt.Errorf("please provide a valid ID number")
 	}
-	taskList.Task[id] = taskList.Task[len(taskList.Task)-1]
-	taskList.Task = taskList.Task[:len(taskList.Task)-1]
-	for i := range taskList.Task {
-		taskList.Task[i].ID = i
-	}
-	newTaskList, err := json.Marshal(taskList)
-	if err != nil {
-		return err
-	}
-	err = os.WriteFile(path, newTaskList, 0600)
-	if err != nil {
-		return err
-	}
-
+	t.Task[ID] = Task{ID: ID, Item: message, Group: group, Timestamp: timestamp.Format(time.RFC3339)}
 	return nil
 }
 
-func ListTasks(path string) error {
-	taskList, err := readTasks(path)
-	if err != nil {
-		return err
+func (t *Tasks) RemoveTask(id int) error {
+	if id > len(t.Task)-1 {
+		return fmt.Errorf("ID provided does not exist, must be 0-%d", len(t.Task)-1)
 	}
-	var taskItemList []string
-	for _, task := range taskList.Task {
-		taskWithID := fmt.Sprintf("%d: %s", task.ID, task.Item)
-		taskItemList = append(taskItemList, taskWithID)
+	t.Task[id] = t.Task[len(t.Task)-1]
+	t.Task = t.Task[:len(t.Task)-1]
+	for i := range t.Task {
+		t.Task[i].ID = i
 	}
-	allTasks := strings.Join(taskItemList, "\n")
-	fmt.Println(allTasks)
 	return nil
 }
 
-func TaskFilePath() (string, error) {
+func (t *Tasks) ListTasks() {
+	drawTasks(os.Stdout, t)
+}
+
+func FilePath(path string, pathSet bool) (string, error) {
+	if pathSet {
+		return path, nil
+	}
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", err
 	}
-
 	filePath := home + "/.td.json"
 	return filePath, nil
 }

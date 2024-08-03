@@ -1,54 +1,50 @@
 /*
 Copyright © 2024 Alec Carpenter
 */
-package cmd
+package group
 
 import (
 	"log"
-	"strconv"
 
 	"github.com/spf13/cobra"
 	"github.com/tehbooom/todo/internal/task"
 )
 
 // rmCmd represents the rm command
-func RmCmd() *cobra.Command {
+func rmCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "rm",
-		Short: "Remove a task by ID number",
-		Long: `Can only remove tasks by ID. To get a list of tasks and their ID run 'todo list'
+		Short: "Removes a task from a group",
+		Long: `Will delete a group and all tasks that are in this group. You cannot
+keep the task if the group is deleted. To do so first remove the task from the group then delete the group.
 
-To remove a task run:
 
-todo rm <task_ID>`,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) > 1 {
-				log.Fatalf("Please provide a single number")
+To remove a task run from a group:
+
+todo edit <task_id> --group ""`,
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) == 0 {
+				log.Fatalf("provide group name")
 			}
-			id, err := strconv.Atoi(args[0])
-			if err != nil {
-				return err
-			}
+			name := args[0]
 			path, _ := cmd.Flags().GetString("data-file")
 			pathSet := cmd.Flags().Changed("data-file")
 			filename, err := task.FilePath(path, pathSet)
 			if err != nil {
-				return err
+				log.Fatal(err)
 			}
 			t, err := task.ReadTasks(filename)
 			if err != nil {
-				return err
+				log.Fatal(err)
 			}
-			err = t.RemoveTask(id)
+			err = t.RemoveGroup(name)
 			if err != nil {
-				return err
+				log.Fatal(err)
 			}
 			err = t.WriteTasks(filename)
 			if err != nil {
 				log.Fatal(err)
 			}
-			t.ListTasks()
-			return nil
 		},
 	}
 	return cmd

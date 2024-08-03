@@ -3,8 +3,16 @@ Copyright © 2024 Alec Carpenter
 */
 package main
 
-import "github.com/tehbooom/todo/cmd"
+import (
+	"os"
+
+	"github.com/tehbooom/todo/cmd"
+)
 
 func main() {
-	cmd.Execute()
+	err := cmd.Execute()
+	if err != nil {
+		os.Exit(1)
+	}
+	os.Exit(0)
 }

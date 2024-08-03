@@ -1,7 +1,8 @@
 /*
 Copyright © 2024 Alec Carpenter
 */
-package cmd
+
+package group
 
 import (
 	"log"
@@ -10,15 +11,14 @@ import (
 	"github.com/tehbooom/todo/internal/task"
 )
 
-// listCmd represents the list command
-func ListCmd() *cobra.Command {
+// groupCmd represents the group command
+func GroupCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "list",
-		Short: "list all tasks",
-		Long: `List all tasks located in the task file
+		Use:   "group",
+		Short: "Lists groups",
+		Long: `Lists all groups that exist
 
-Run:
-todo list`,
+to quickly create a Cobra application.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			path, _ := cmd.Flags().GetString("data-file")
 			pathSet := cmd.Flags().Changed("data-file")
@@ -30,8 +30,10 @@ todo list`,
 			if err != nil {
 				log.Fatal(err)
 			}
-			t.ListTasks()
+			t.ListGroups()
 		},
 	}
+	cmd.AddCommand(rmCmd())
+	cmd.AddCommand(addCmd())
 	return cmd
 }
