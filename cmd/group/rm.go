@@ -47,5 +47,6 @@ todo edit <task_id> --group ""`,
 			}
 		},
 	}
+	cmd.Flags().StringP("data-file", "d", "~/.td.json", "Path to file storing tasks")
 	return cmd
 }

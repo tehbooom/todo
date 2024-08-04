@@ -4,8 +4,6 @@ Copyright © 2024 Alec Carpenter
 package cmd
 
 import (
-	"log"
-
 	"github.com/spf13/cobra"
 	"github.com/tehbooom/todo/internal/task"
 )
@@ -19,19 +17,22 @@ func ListCmd() *cobra.Command {
 
 Run:
 todo list`,
-		Run: func(cmd *cobra.Command, args []string) {
+		SilenceUsage: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			path, _ := cmd.Flags().GetString("data-file")
 			pathSet := cmd.Flags().Changed("data-file")
 			filename, err := task.FilePath(path, pathSet)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			t, err := task.ReadTasks(filename)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
-			t.ListTasks()
+			t.ListTasks(cmd.OutOrStdout())
+			return nil
 		},
 	}
+	cmd.Flags().StringP("data-file", "d", "~/.td.json", "Path to file storing tasks")
 	return cmd
 }

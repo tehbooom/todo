@@ -20,7 +20,7 @@ func AddCmd() *cobra.Command {
 
 Run:
 todo add <task_description>`,
-
+		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
 				log.Fatalf("Must provide task to add")
@@ -46,7 +46,7 @@ todo add <task_description>`,
 			if err != nil {
 				log.Fatal(err)
 			}
-			t.ListTasks()
+			t.ListTasks(cmd.OutOrStdout())
 			return nil
 		},
 	}

@@ -33,6 +33,7 @@ to quickly create a Cobra application.`,
 			t.ListGroups()
 		},
 	}
+	cmd.Flags().StringP("data-file", "d", "~/.td.json", "Path to file storing tasks")
 	cmd.AddCommand(rmCmd())
 	cmd.AddCommand(addCmd())
 	return cmd

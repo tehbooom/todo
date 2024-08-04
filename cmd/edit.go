@@ -4,7 +4,7 @@ Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -25,13 +25,14 @@ todo edit <task_id> <task_description>
 Optionally you can specify a group or leav a group as empty will remove it from a group.
 todo edit <task_id> --group example_group <task_description>
 todo edit <task_id> --group`,
-		Run: func(cmd *cobra.Command, args []string) {
+		SilenceUsage: true,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
-				log.Fatalf("Must provide task ID to edit")
+				return fmt.Errorf("must provide task ID to edit")
 			}
 			id, err := strconv.Atoi(args[0])
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			group, _ := cmd.Flags().GetString("group")
 			groupSet := cmd.Flags().Changed("group")
@@ -40,20 +41,22 @@ todo edit <task_id> --group`,
 			taskDescription := strings.Join(args[1:], " ")
 			filename, err := task.FilePath(path, pathSet)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			t, err := task.ReadTasks(filename)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			err = t.EditTask(taskDescription, group, id, groupSet)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			err = t.WriteTasks(filename)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
+			t.ListTasks(cmd.OutOrStdout())
+			return nil
 		},
 	}
 	cmd.Flags().StringP("group", "g", "", "Specify the group the task should be in")

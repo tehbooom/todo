@@ -71,36 +71,43 @@ func (t *Tasks) AddTask(message, group string, groupSet bool) error {
 	var newTask Task
 	var newTaskID int
 	if len(t.Task) != 0 {
-		fmt.Println(len(t.Task) - 1)
 		newTaskID = len(t.Task)
-		fmt.Println(newTaskID)
 	} else {
 		newTaskID = 0
 	}
 	if !groupSet {
 		group = ""
+	} else if !t.checkGroupCreated(group) {
+		err := t.CreateGroup(group)
+		if err != nil {
+			return err
+		}
 	}
 	timestamp := time.Now()
 	newTask = Task{ID: newTaskID, Item: message, Group: group, Timestamp: timestamp.Format(time.RFC3339)}
 	t.Task = append(t.Task, newTask)
+	if groupSet {
+		err := t.addTaskToGroup(group, newTaskID)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
 // Edit a task
-func (t *Tasks) EditTask(message, group string, ID int, groupSet bool) error {
-	existingTask := t.Task[ID]
+func (t *Tasks) EditTask(message, group string, id int, groupSet bool) error {
+	existingTask := t.Task[id]
 	if message == "" {
 		message = existingTask.Item
 	}
 	timestamp := time.Now()
 	if !groupSet {
 		group = existingTask.Group
-	} else {
-		if group == "" && existingTask.Group != "" {
-			t.removeTaskFromGroup(ID)
-		}
+	} else if group == "" && existingTask.Group != "" {
+		t.removeTaskFromGroup(id)
 	}
-	t.Task[ID] = Task{ID: ID, Item: message, Group: group, Timestamp: timestamp.Format(time.RFC3339)}
+	t.Task[id] = Task{ID: id, Item: message, Group: group, Timestamp: timestamp.Format(time.RFC3339)}
 	return nil
 }
 
@@ -116,8 +123,8 @@ func (t *Tasks) RemoveTask(id int) error {
 	return nil
 }
 
-func (t *Tasks) ListTasks() {
-	drawTasks(os.Stdout, t)
+func (t *Tasks) ListTasks(w io.Writer) {
+	drawTasks(w, t)
 }
 
 func FilePath(path string, pathSet bool) (string, error) {

@@ -4,6 +4,7 @@ Copyright © 2024 Alec Carpenter
 package group
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -20,9 +21,9 @@ func addCmd() *cobra.Command {
 Run:
 todo group add <group_name>`,
 
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
-				log.Fatalf("provide group name")
+				return fmt.Errorf("provide group name")
 			}
 			name := args[0]
 			path, _ := cmd.Flags().GetString("data-file")
@@ -43,7 +44,9 @@ todo group add <group_name>`,
 			if err != nil {
 				log.Fatal(err)
 			}
+			return nil
 		},
 	}
+	cmd.Flags().StringP("data-file", "d", "~/.td.json", "Path to file storing tasks")
 	return cmd
 }

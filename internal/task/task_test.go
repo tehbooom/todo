@@ -47,7 +47,7 @@ func TestReadTasks(t *testing.T) {
 		t.Error(err)
 	}
 
-	if !compareTask(newTask, &readTask) {
+	if !compareTask(*newTask, readTask) {
 		t.Errorf("Task list in file does not equal read task")
 	}
 }
@@ -92,7 +92,7 @@ func TestAddTask(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if !compareTask(expectedTask, &task) {
+	if !compareTask(*expectedTask, task) {
 		t.Errorf("Task added does not match: got %v, expected %v", task, expectedTask)
 	}
 
@@ -123,7 +123,7 @@ func TestAddTask(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if !compareTask(addedExpectedTask, &task) {
+	if !compareTask(*addedExpectedTask, task) {
 		t.Errorf("Task added does not match: got %v, expected %v", task, expectedTask)
 	}
 }
@@ -175,7 +175,7 @@ func TestRemoveTask(t *testing.T) {
 			},
 		},
 	}
-	if !compareTask(afterTasks, beforeTasks) {
+	if !compareTask(*afterTasks, *beforeTasks) {
 		t.Errorf("Task removed does not match: got %v, expected %v", beforeTasks, afterTasks)
 	}
 }
@@ -219,7 +219,7 @@ func TestEditTask(t *testing.T) {
 			},
 		},
 	}
-	if !compareTask(messageTasks, beforeTasks) {
+	if !compareTask(*messageTasks, *beforeTasks) {
 		t.Errorf("Task edited does not match: got %v, expected %v", beforeTasks, messageTasks)
 	}
 
@@ -244,7 +244,7 @@ func TestEditTask(t *testing.T) {
 			},
 		},
 	}
-	if !compareTask(groupEditTasks, messageTasks) {
+	if !compareTask(*groupEditTasks, *messageTasks) {
 		t.Errorf("Task group edited does not match: got %v, expected %v", messageTasks, groupEditTasks)
 	}
 
@@ -269,7 +269,7 @@ func TestEditTask(t *testing.T) {
 			},
 		},
 	}
-	if !compareTask(groupRemovedTasks, groupEditTasks) {
+	if !compareTask(*groupRemovedTasks, *groupEditTasks) {
 		t.Errorf("Task group removed does not match: got %v, expected %v", groupEditTasks, groupRemovedTasks)
 	}
 }
@@ -296,7 +296,7 @@ func TestFilePath(t *testing.T) {
 	}
 }
 
-func compareTask(expected, actual *Tasks) bool {
+func compareTask(expected, actual Tasks) bool {
 	for i, v := range expected.Task {
 		if v.Group != actual.Task[i].Group {
 			return false

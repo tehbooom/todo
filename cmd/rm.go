@@ -4,7 +4,7 @@ Copyright © 2024 Alec Carpenter
 package cmd
 
 import (
-	"log"
+	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -21,15 +21,19 @@ func RmCmd() *cobra.Command {
 To remove a task run:
 
 todo rm <task_ID>`,
+		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) > 1 {
-				log.Fatalf("Please provide a single number")
+				return fmt.Errorf("please provide a single number")
 			}
 			id, err := strconv.Atoi(args[0])
 			if err != nil {
 				return err
 			}
-			path, _ := cmd.Flags().GetString("data-file")
+			path, err := cmd.Flags().GetString("data-file")
+			if err != nil {
+				return err
+			}
 			pathSet := cmd.Flags().Changed("data-file")
 			filename, err := task.FilePath(path, pathSet)
 			if err != nil {
@@ -45,11 +49,12 @@ todo rm <task_ID>`,
 			}
 			err = t.WriteTasks(filename)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
-			t.ListTasks()
+			t.ListTasks(cmd.OutOrStdout())
 			return nil
 		},
 	}
+	cmd.Flags().StringP("data-file", "d", "~/.td.json", "Path to file storing tasks")
 	return cmd
 }

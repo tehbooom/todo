@@ -36,7 +36,7 @@ func TestAddTaskToGroup(t *testing.T) {
 			},
 		},
 	}
-	if !compareTask(groupCreated, newTask) {
+	if !compareTask(*groupCreated, *newTask) {
 		t.Errorf("Task group created does not match: got %v, expected %v", newTask, groupCreated)
 	}
 
@@ -89,7 +89,7 @@ func TestAddTaskToGroup(t *testing.T) {
 			},
 		},
 	}
-	if !compareTask(taskAdded, taskAdd) {
+	if !compareTask(*taskAdded, *taskAdd) {
 		t.Errorf("Task added to existing group does not match: got %v, expected %v", taskAdd, taskAdded)
 	}
 }
@@ -117,10 +117,7 @@ func TestRemoveTaskFromGroup(t *testing.T) {
 			},
 		},
 	}
-	err := taskRemove.removeTaskFromGroup(1)
-	if err != nil {
-		t.Error(err)
-	}
+	taskRemove.removeTaskFromGroup(1)
 	var taskRemoved = &Tasks{
 		Task: []Task{
 			{
@@ -143,7 +140,7 @@ func TestRemoveTaskFromGroup(t *testing.T) {
 			},
 		},
 	}
-	if !compareTask(taskRemoved, taskRemove) {
+	if !compareTask(*taskRemoved, *taskRemove) {
 		t.Errorf("Task group created does not match: got %v, expected %v", taskRemove, taskRemoved)
 	}
 }
@@ -187,7 +184,7 @@ func TestRemoveGroup(t *testing.T) {
 		},
 		Groups: []Group{},
 	}
-	if !compareTask(groupRemoved, groupRemove) {
+	if !compareTask(*groupRemoved, *groupRemove) {
 		t.Errorf("Task group created does not match: got %v, expected %v", groupRemove, groupRemoved)
 	}
 }
@@ -224,7 +221,7 @@ func TestCreategroup(t *testing.T) {
 			},
 		},
 	}
-	if !compareTask(groupAdded, noGroup) {
+	if !compareTask(*groupAdded, *noGroup) {
 		t.Errorf("Task group created does not match: got %v, expected %v", noGroup, groupAdded)
 	}
 }

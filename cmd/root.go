@@ -11,11 +11,11 @@ import (
 func NewRootCmd() *cobra.Command {
 	rootCmd := &cobra.Command{
 
-		Use:   "todo",
-		Short: "todo CLI app",
-		Long:  `todo app thats simple and not unique allowing you to add, list and remove tasks`,
+		Use:          "todo",
+		Short:        "todo CLI app",
+		Long:         `todo app thats simple and not unique allowing you to add, list and remove tasks`,
+		SilenceUsage: true,
 	}
-	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 	rootCmd.AddCommand(RmCmd())
 	rootCmd.AddCommand(EditCmd())
 	rootCmd.AddCommand(ListCmd())

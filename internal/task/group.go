@@ -39,7 +39,7 @@ func (t *Tasks) addTaskToGroup(name string, task int) error {
 	return nil
 }
 
-func (t *Tasks) removeTaskFromGroup(id int) error {
+func (t *Tasks) removeTaskFromGroup(id int) {
 	groupName := t.Task[id].Group
 
 	for i, groupItem := range t.Groups {
@@ -53,8 +53,6 @@ func (t *Tasks) removeTaskFromGroup(id int) error {
 	}
 
 	t.Task[id].Group = ""
-
-	return nil
 }
 
 func (t *Tasks) RemoveGroup(name string) error {
