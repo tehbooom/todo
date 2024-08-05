@@ -201,10 +201,7 @@ func TestCreategroup(t *testing.T) {
 		},
 		Groups: []Group{},
 	}
-	err := noGroup.CreateGroup("grp1")
-	if err != nil {
-		t.Error(err)
-	}
+	noGroup.CreateGroup("grp1")
 	var groupAdded = &Tasks{
 		Task: []Task{
 			{

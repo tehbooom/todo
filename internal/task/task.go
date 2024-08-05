@@ -78,10 +78,7 @@ func (t *Tasks) AddTask(message, group string, groupSet bool) error {
 	if !groupSet {
 		group = ""
 	} else if !t.checkGroupCreated(group) {
-		err := t.CreateGroup(group)
-		if err != nil {
-			return err
-		}
+		t.CreateGroup(group)
 	}
 	timestamp := time.Now()
 	newTask = Task{ID: newTaskID, Item: message, Group: group, Timestamp: timestamp.Format(time.RFC3339)}

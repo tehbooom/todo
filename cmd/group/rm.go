@@ -4,7 +4,7 @@ Copyright © 2024 Alec Carpenter
 package group
 
 import (
-	"log"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/tehbooom/todo/internal/task"
@@ -22,29 +22,30 @@ keep the task if the group is deleted. To do so first remove the task from the g
 To remove a task run from a group:
 
 todo edit <task_id> --group ""`,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 0 {
-				log.Fatalf("provide group name")
+				return fmt.Errorf("provide group name")
 			}
 			name := args[0]
 			path, _ := cmd.Flags().GetString("data-file")
 			pathSet := cmd.Flags().Changed("data-file")
 			filename, err := task.FilePath(path, pathSet)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			t, err := task.ReadTasks(filename)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			err = t.RemoveGroup(name)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			err = t.WriteTasks(filename)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
+			return nil
 		},
 	}
 	cmd.Flags().StringP("data-file", "d", "~/.td.json", "Path to file storing tasks")

@@ -23,7 +23,7 @@ To remove a task run:
 todo rm <task_ID>`,
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) > 1 {
+			if len(args) != 1 {
 				return fmt.Errorf("please provide a single number")
 			}
 			id, err := strconv.Atoi(args[0])

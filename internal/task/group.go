@@ -4,7 +4,7 @@ Copyright © 2024 Alec Carpenter
 package task
 
 import (
-	"os"
+	"io"
 	"slices"
 	"sort"
 )
@@ -18,10 +18,7 @@ func (t *Tasks) addTaskToGroup(name string, task int) error {
 	groupExist := t.checkGroupCreated(name)
 
 	if !groupExist {
-		err := t.CreateGroup(name)
-		if err != nil {
-			return err
-		}
+		t.CreateGroup(name)
 	}
 
 	t.Task[task].Group = name
@@ -80,10 +77,10 @@ func (t *Tasks) RemoveGroup(name string) error {
 	return nil
 }
 
-func (t *Tasks) CreateGroup(name string) error {
+func (t *Tasks) CreateGroup(name string) {
 	for _, group := range t.Groups {
 		if name == group.Name {
-			return nil
+			return
 		}
 	}
 
@@ -91,11 +88,10 @@ func (t *Tasks) CreateGroup(name string) error {
 	group.Name = name
 	group.TaskIDs = []int{}
 	t.Groups = append(t.Groups, group)
-	return nil
 }
 
-func (t *Tasks) ListGroups() {
-	drawListGroups(os.Stdout, t)
+func (t *Tasks) ListGroups(w io.Writer) {
+	drawListGroups(w, t)
 }
 
 func (t *Tasks) checkGroupCreated(name string) bool {

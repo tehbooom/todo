@@ -5,7 +5,6 @@ package group
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/spf13/cobra"
 	"github.com/tehbooom/todo/internal/task"
@@ -30,19 +29,16 @@ todo group add <group_name>`,
 			pathSet := cmd.Flags().Changed("data-file")
 			filename, err := task.FilePath(path, pathSet)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			t, err := task.ReadTasks(filename)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
-			err = t.CreateGroup(name)
-			if err != nil {
-				log.Fatal(err)
-			}
+			t.CreateGroup(name)
 			err = t.WriteTasks(filename)
 			if err != nil {
-				log.Fatal(err)
+				return err
 			}
 			return nil
 		},

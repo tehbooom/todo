@@ -57,3 +57,20 @@ func TestAddCmd(t *testing.T) {
 		t.Errorf("Task removed does not match: got \"%v\", expected \"%v\"", actualTask, *expectedTask)
 	}
 }
+
+func TestAddErrCmd(t *testing.T) {
+	tempPath := t.TempDir() + "/add_err_group.json"
+	err := helpers.InitializeTask(tempPath)
+	if err != nil {
+		t.Error(err)
+	}
+	cmd := addCmd()
+	actual := new(bytes.Buffer)
+	cmd.SetOut(actual)
+	cmd.SetErr(actual)
+	cmd.SetArgs([]string{"-d", tempPath})
+	err = cmd.Execute()
+	if err == nil {
+		t.Errorf("Did not provide group name and command returned no error")
+	}
+}

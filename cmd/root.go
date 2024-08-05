@@ -4,6 +4,8 @@ Copyright © 2024 Alec Carpenter
 package cmd
 
 import (
+	"io"
+
 	"github.com/spf13/cobra"
 	"github.com/tehbooom/todo/cmd/group"
 )
@@ -24,7 +26,8 @@ func NewRootCmd() *cobra.Command {
 	return rootCmd
 }
 
-func Execute() error {
+func Execute(w io.Writer) error {
 	rootCmd := NewRootCmd()
+	rootCmd.SetOut(w)
 	return rootCmd.Execute()
 }
