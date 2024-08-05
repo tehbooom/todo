@@ -1,8 +1,8 @@
 # Todo app
 
 <p align="center">
-  <img src="https://goreportcard.com/badge/github.com/tehbooom/todo" width="" title="ReportCard">
-  <img src="https://raw.githubusercontent.com/tehbooom/todo/badges/.badges/main/coverage.svg" width="350" alt="Coverage">
+  <img src="https://goreportcard.com/badge/github.com/tehbooom/todo" title="ReportCard">
+  <img src="https://raw.githubusercontent.com/tehbooom/todo/badges/.badges/main/coverage.svg" alt="Coverage">
 </p>
 
 Simple todo CLI application to add, edit, and remove tasks and also group them together by projects. 
