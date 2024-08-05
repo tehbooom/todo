@@ -15,7 +15,7 @@ import (
 func AddCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add",
-		Short: "add a task",
+		Short: "Add a task",
 		Long: `Adds a task and assigns it an ID
 
 Run:
@@ -46,7 +46,7 @@ todo add <task_description>`,
 			if err != nil {
 				log.Fatal(err)
 			}
-			t.ListTasks(cmd.OutOrStdout())
+			t.ListTasks(cmd.OutOrStdout(), group, false)
 			return nil
 		},
 	}

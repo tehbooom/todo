@@ -120,8 +120,12 @@ func (t *Tasks) RemoveTask(id int) error {
 	return nil
 }
 
-func (t *Tasks) ListTasks(w io.Writer) {
-	drawTasks(w, t)
+func (t *Tasks) ListTasks(w io.Writer, group string, groupSet bool) {
+	if groupSet {
+		drawTasksGroup(w, t, group)
+	} else {
+		drawTasks(w, t)
+	}
 }
 
 func FilePath(path string, pathSet bool) (string, error) {

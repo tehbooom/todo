@@ -21,6 +21,8 @@ todo list`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			path, _ := cmd.Flags().GetString("data-file")
 			pathSet := cmd.Flags().Changed("data-file")
+			group, _ := cmd.Flags().GetString("group")
+			groupSet := cmd.Flags().Changed("group")
 			filename, err := task.FilePath(path, pathSet)
 			if err != nil {
 				return err
@@ -29,10 +31,11 @@ todo list`,
 			if err != nil {
 				return err
 			}
-			t.ListTasks(cmd.OutOrStdout())
+			t.ListTasks(cmd.OutOrStdout(), group, groupSet)
 			return nil
 		},
 	}
+	cmd.Flags().StringP("group", "g", "", "Specify the group the task should be in")
 	cmd.Flags().StringP("data-file", "d", "~/.td.json", "Path to file storing tasks")
 	return cmd
 }

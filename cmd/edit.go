@@ -55,7 +55,7 @@ todo edit <task_id> --group`,
 			if err != nil {
 				return err
 			}
-			t.ListTasks(cmd.OutOrStdout())
+			t.ListTasks(cmd.OutOrStdout(), group, false)
 			return nil
 		},
 	}

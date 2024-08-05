@@ -51,7 +51,7 @@ todo rm <task_ID>`,
 			if err != nil {
 				return err
 			}
-			t.ListTasks(cmd.OutOrStdout())
+			t.ListTasks(cmd.OutOrStdout(), "", false)
 			return nil
 		},
 	}
