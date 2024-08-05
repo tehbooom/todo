@@ -3,4 +3,7 @@ git-token: ${{ github.ref_name == 'main' && secrets.GITHUB_TOKEN || '' }}
 git-branch: badges
 local-prefix: github.com/tehbooom/todo
 threshold:
-  total: 75
+  total: 80
+exclude:
+  paths:
+    - ^main.go
