@@ -82,7 +82,10 @@ func TestRmErrCmd(t *testing.T) {
 	if err == nil {
 		t.Errorf("Item does not exist in taskfile and command returned no error")
 	}
-	os.WriteFile(tempPath, []byte("noJson"), 0660)
+	err = os.WriteFile(tempPath, []byte("noJson"), 0600)
+	if err != nil {
+		t.Error(err)
+	}
 	cmd.SetArgs([]string{"0", "-d", tempPath})
 	err = cmd.Execute()
 	if err == nil {
