@@ -1,8 +1,21 @@
-name: Go test coverage check
+name: Lint and Test
 on: [push]
 jobs:
-  go-test:
+  golangci-lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.58
+  test:
     name: test
+    needs: [golangci-lint]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
