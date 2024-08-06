@@ -103,6 +103,11 @@ func (t *Tasks) EditTask(message, group string, id int, groupSet bool) error {
 		group = existingTask.Group
 	} else if group == "" && existingTask.Group != "" {
 		t.removeTaskFromGroup(id)
+	} else {
+		err := t.addTaskToGroup(group, id)
+		if err != nil {
+			return err
+		}
 	}
 	t.Task[id] = Task{ID: id, Item: message, Group: group, Timestamp: timestamp.Format(time.RFC3339)}
 	return nil
